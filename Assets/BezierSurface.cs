@@ -44,10 +44,10 @@ public class BezierSurface : MonoBehaviour
         } 
         int length = calcTrianglespoints();
         for(int i = 0; i < length; i++){
-            Debug.Log(triangles[i]);
+            Debug.Log($"triangles{triangles[i]}");
         }
         mesh.vertices = vertexarray;
-        //mesh.normals = normalarray;
+        mesh.normals = normalarray;
         mesh.triangles = triangles;
         meshFilter.mesh = mesh;
     }
@@ -55,7 +55,7 @@ public class BezierSurface : MonoBehaviour
 
     private void Update()
     {
-        Awake();
+        //Awake();
         
 
         //draw the bezier surface 
@@ -144,11 +144,11 @@ public class BezierSurface : MonoBehaviour
         samplePoints = new Vector3[nospsquared];
         int[] triangles = new int[calcTrianglespoints()];
         Debug.Log($"nospsquared{nospsquared}");
-        
+        int index = 0;
         for (int vSampleIndex = 0; vSampleIndex < numberOfSampePoints; vSampleIndex++)
         {
             float v = (float)vSampleIndex / (numberOfSampePoints - 1.0f);
-            int index = 0;
+            
             //samplePoints.Add(new List<Vector3>());
             //sampleNormals.Add(new List<Vector3>());
 
@@ -163,9 +163,10 @@ public class BezierSurface : MonoBehaviour
                     if(uSampleIndex < numberOfSampePoints-1){
                     triangles[index] = (vSampleIndex*numberOfSampePoints) + uSampleIndex;
                     index += 1;
-                    triangles[index] = (vSampleIndex*numberOfSampePoints) + uSampleIndex +1 ; 
-                    index += 1;
+                   
                     triangles[index] = ((vSampleIndex-1)*numberOfSampePoints) + uSampleIndex +1 ; 
+                    index += 1;
+                     triangles[index] = (vSampleIndex*numberOfSampePoints) + uSampleIndex +1 ; 
                     index += 1;
                     // upside down triangle
                       triangles[index] = (vSampleIndex*numberOfSampePoints) + uSampleIndex;
@@ -174,7 +175,7 @@ public class BezierSurface : MonoBehaviour
                     index += 1;
                     triangles[index] = ((vSampleIndex-1)*numberOfSampePoints) + uSampleIndex +1 ; 
                     index += 1;
-                    Debug.Log($"triindex{triangles[index]}");
+                    Debug.Log($"triindex{triangles[index-1]}");
 
                     }
                 }
@@ -249,7 +250,7 @@ public class BezierSurface : MonoBehaviour
         normal = Vector3.Cross(uTangent, vTangent);
 
         //return final point
-        Debug.Log($"final point {finalPoint}, normal {normal}, v tangent {vTangent}, u tangent {uTangent}");
+        //Debug.Log($"final point {finalPoint}, normal {normal}, v tangent {vTangent}, u tangent {uTangent}");
         return finalPoint;
     }
 

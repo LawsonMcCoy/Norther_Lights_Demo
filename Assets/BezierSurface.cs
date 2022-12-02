@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class BezierSurface : MonoBehaviour
 {
-    //surfaceControlPointsing
+    //testing
     [SerializeField] int numberOfSampePoints;
+    [SerializeField] bool drawSurfaceNormals;
+    [SerializeField] float normalDrawLength;
 
     //mesh filter for grabbing the mesh
     [SerializeField] private MeshFilter meshFilter;
@@ -34,11 +36,9 @@ public class BezierSurface : MonoBehaviour
     private void Update()
     {
         Awake();
-        //draw the bezier curve
-        for (int drawIndex = 0; drawIndex < 4; drawIndex++)
-        {
-            drawCurve(Slice(surfaceControlPoints, 4*drawIndex, 4*(drawIndex + 1)), Color.yellow);
-        }
+
+        //draw the bezier surface
+        drawSurface(surfaceControlPoints, Color.yellow, Color.green, drawSurfaceNormals);
     }
 
     private Vector3[] Slice(Vector3[] data, int start, int end)
@@ -65,24 +65,118 @@ public class BezierSurface : MonoBehaviour
 
         for (int sampleIndex = 0; sampleIndex < samplePoints.Count - 1; sampleIndex++)
         {
-            Debug.Log($"Line {sampleIndex}, start point {samplePoints[sampleIndex]}, end point {samplePoints[sampleIndex + 1]}");
             Debug.DrawLine(samplePoints[sampleIndex], samplePoints[sampleIndex + 1], color);
+        }
+    }
+
+    private void drawSurface(Vector3[] controlPoints, Color uColor, Color vColor, bool drawNormals=false)
+    {
+        List<List<Vector3>> samplePoints = new List<List<Vector3>>();
+        List<List<Vector3>> sampleNormals = new List<List<Vector3>>();
+
+        for (int vSampleIndex = 0; vSampleIndex < numberOfSampePoints; vSampleIndex++)
+        {
+            float v = (float)vSampleIndex / (numberOfSampePoints - 1.0f);
+            samplePoints.Add(new List<Vector3>());
+            sampleNormals.Add(new List<Vector3>());
+
+            for (int uSampleIndex = 0; uSampleIndex < numberOfSampePoints; uSampleIndex++)
+            {
+                float u = (float)uSampleIndex / (numberOfSampePoints - 1.0f);
+                Vector3 normal;
+                samplePoints[vSampleIndex].Add(computePointOnBezierSurface(u, v, controlPoints, out normal));
+                sampleNormals[vSampleIndex].Add(normal);
+            }
+        }
+
+        for (int vSampleIndex = 0; vSampleIndex < numberOfSampePoints; vSampleIndex++)
+        {
+            for (int uSampleIndex = 0; uSampleIndex < numberOfSampePoints; uSampleIndex++)
+            {
+                //draw a line to the next u point
+                if (uSampleIndex != numberOfSampePoints - 1)
+                {
+                    Debug.DrawLine(samplePoints[vSampleIndex][uSampleIndex], samplePoints[vSampleIndex][uSampleIndex + 1], uColor);
+                }
+
+                //draw a line to the next v point
+                if (vSampleIndex != numberOfSampePoints - 1)
+                {
+                    Debug.DrawLine(samplePoints[vSampleIndex][uSampleIndex], samplePoints[vSampleIndex + 1][uSampleIndex], vColor);
+                }
+
+                //if drawNormal is true then draw a line to show the normals
+                if (drawNormals)
+                {
+                    //note that we cannot set a color in the inspector, doing so result in DrawLine drawing nothing
+                    Debug.DrawLine(samplePoints[vSampleIndex][uSampleIndex], samplePoints[vSampleIndex][uSampleIndex] + (normalDrawLength*sampleNormals[vSampleIndex][uSampleIndex]), Color.blue);
+                }
+            }
         }
     }
 
     /*Function to compute the position and tangent on a Bezier surface
     * 
-    * t - the parameter t of the Bezier curve
+    * u - the parameter u of the Bezier surface
+    * v - the parameter v of the Bezier surface
     * controlPoints - list of control points to define the curve, row major order
     * 
     * return:
-    *  Value - the position of the point on the curve
-    *  tangent - the tangent vector of the Bezier curve at the point
+    *  Value - the position of the point on the surface
+    *  normal - the normal vector of the Bezier surface at the point
     */
-    // private Vector3 computePointOnBezierSurface(float u, float v, Vector3[] controlPoints, out Vector3 tangent)
-    // {
-    //     // Vector3 vControl
-    // }
+    private Vector3 computePointOnBezierSurface(float u, float v, Vector3[] controlPoints, out Vector3 normal)
+    {
+        const int NUMBER_OF_CURVES = 4; //The total number of curves going on direction, it is the same
+                                        //as the number of control points for any curve, and is the square
+                                        //root of NUMBER_OF_CONTROL_POINTS
+
+        //declare arrays to store the control points for the v direction and tangents in u direction
+        Vector3[] vControlPoints = new Vector3[NUMBER_OF_CURVES];
+        Vector3[] uTangents = new Vector3[NUMBER_OF_CURVES];
+
+        Vector3 finalPoint;
+        Vector3 vTangent;
+        Vector3 uTangent;
+
+        //compute the control points for v direction and tangents in u direction
+        for (int uCurveIndex = 0; uCurveIndex < NUMBER_OF_CURVES; uCurveIndex++)
+        {
+            vControlPoints[uCurveIndex] = computePointOnBezierCurve(u, Slice(controlPoints, uCurveIndex*NUMBER_OF_CURVES, (uCurveIndex + 1)*NUMBER_OF_CURVES), out uTangents[uCurveIndex]);
+        }
+
+        //use interpolation to compute u tangent
+
+        //find which two u curve the point is between
+        float uScaledByNumberOfCurves = u * (NUMBER_OF_CURVES - 1); //first scale u by the number of curve, u is now in
+                                                              //the form of x.y where x is the index of the curve on
+                                                              //the left, and y is the t parameter for interpolation
+        int leftUCurveIndex = (int)Mathf.Floor(uScaledByNumberOfCurves); //get index (x) by flooring u
+        float uInterpolationParameter = uScaledByNumberOfCurves - leftUCurveIndex; //get the t parameter (y) using x.y - x
+
+        if (leftUCurveIndex == NUMBER_OF_CURVES - 1)
+        {
+            //On the last control point, this is an edge case that causes an error, so we are handling tis case seperately
+            //if you are on a control point the tangent is just the tangent for that control point
+            uTangent = uTangents[leftUCurveIndex];
+        }
+        else
+        {
+            //perform the linear interpolation of the tangents, this is the same as using Mathf.Lerp
+            uTangent = ((1-uInterpolationParameter)*uTangents[leftUCurveIndex]) + (uInterpolationParameter*uTangents[leftUCurveIndex + 1]);
+        }
+
+
+        //compute final point and tangent in v direction
+        finalPoint = computePointOnBezierCurve(v, vControlPoints, out vTangent);
+
+        //compute the normal vector
+        normal = Vector3.Cross(uTangent, vTangent);
+
+        //return final point
+        Debug.Log($"final point {finalPoint}, normal {normal}, v tangent {vTangent}, u tangent {uTangent}");
+        return finalPoint;
+    }
 
     /*Function to compute the position and tangent on a Bezier curve
     * 
@@ -110,7 +204,6 @@ public class BezierSurface : MonoBehaviour
             for (int bezierIndex = 0; bezierIndex < bezierOrder; bezierIndex++)
             {
                 //compute the control point one level down
-                Debug.Log($"Control Point {intermmediateControlPoints[bezierIndex]}, level {bezierOrder}, point {bezierIndex}, t {t}");
                 intermmediateControlPoints[bezierIndex] = ((1 - t)*intermmediateControlPoints[bezierIndex]) + (t*intermmediateControlPoints[bezierIndex + 1]);
             }
 

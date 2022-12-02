@@ -413,8 +413,28 @@ PrefabInstance:
       value: BezerSurfacePatch
       objectReference: {fileID: 0}
     - target: {fileID: 4129338828523610173, guid: fff9aa7625bbbae86a2bc39a81e2fb57, type: 3}
+      propertyPath: normalDrawLength
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4129338828523610173, guid: fff9aa7625bbbae86a2bc39a81e2fb57, type: 3}
+      propertyPath: normalDrawColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4129338828523610173, guid: fff9aa7625bbbae86a2bc39a81e2fb57, type: 3}
+      propertyPath: normalDrawColor.g
+      value: 0.19600487
+      objectReference: {fileID: 0}
+    - target: {fileID: 4129338828523610173, guid: fff9aa7625bbbae86a2bc39a81e2fb57, type: 3}
+      propertyPath: normalDrawColor.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4129338828523610173, guid: fff9aa7625bbbae86a2bc39a81e2fb57, type: 3}
+      propertyPath: drawSurfaceNormals
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4129338828523610173, guid: fff9aa7625bbbae86a2bc39a81e2fb57, type: 3}
       propertyPath: numberOfSampePoints
-      value: 100
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4129338828547225717, guid: fff9aa7625bbbae86a2bc39a81e2fb57, type: 3}
       propertyPath: m_Icon

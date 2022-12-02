@@ -391,7 +391,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0711500cce42c73b1976d3a4320bfe2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberOfSampePoints: 0
+  numberOfSampePoints: 20
+  drawSurfaceNormals: 0
+  normalDrawLength: 0.25
+  normalDrawColor: {r: 0, g: 0, b: 0, a: 0}
   meshFilter: {fileID: 4129338828523610115}
   surfaceControlTransforms:
   - {fileID: 4129338828323402202}

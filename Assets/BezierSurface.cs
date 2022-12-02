@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BezierSurface : MonoBehaviour
 {
-    //testing
+    //surfaceControlPointsing
     [SerializeField] int numberOfSampePoints;
 
     //mesh filter for grabbing the mesh
@@ -12,8 +12,18 @@ public class BezierSurface : MonoBehaviour
     private Mesh mesh;
 
     //The control points
-    [Tooltip("4x4 matrix of control points in column major order")]
-    [SerializeField] private Vector3[] test = new Vector3[16];
+    const int NUMBER_OF_CONTROL_POINTS = 16;
+    [Tooltip("4x4 matrix of control points in row major order")]
+    [SerializeField] private Transform[] surfaceControlTransforms = new Transform[NUMBER_OF_CONTROL_POINTS];
+    private Vector3[] surfaceControlPoints = new Vector3[NUMBER_OF_CONTROL_POINTS];
+
+    private void Awake()
+    {
+        for (int index = 0; index < NUMBER_OF_CONTROL_POINTS; index++)
+        {
+            surfaceControlPoints[index] = surfaceControlTransforms[index].position;
+        }
+    }
 
     private void Start()
     {
@@ -23,20 +33,11 @@ public class BezierSurface : MonoBehaviour
 
     private void Update()
     {
+        Awake();
         //draw the bezier curve
-        List<Vector3> samplePoints = new List<Vector3>();
-        for (int sampleIndex = 0; sampleIndex < numberOfSampePoints; sampleIndex++)
+        for (int drawIndex = 0; drawIndex < 4; drawIndex++)
         {
-            float t = (float)sampleIndex / (samplePoints.Count - 1.0f);
-            Vector3 tangent;
-            samplePoints.Add(computePointOnBezierCurve(t, Slice(test, 0, 4), out tangent));
-        }
-
-        Debug.Log(samplePoints.Count - 1);
-        for (int sampleIndex = 0; sampleIndex < samplePoints.Count - 1; sampleIndex++)
-        {
-            Debug.Log($"Line {sampleIndex}, start point {samplePoints[sampleIndex]}, end point {samplePoints[sampleIndex + 1]}");
-            Debug.DrawLine(samplePoints[sampleIndex], samplePoints[sampleIndex + 1], Color.yellow);
+            drawCurve(Slice(surfaceControlPoints, 4*drawIndex, 4*(drawIndex + 1)), Color.yellow);
         }
     }
 
@@ -46,13 +47,42 @@ public class BezierSurface : MonoBehaviour
 
         for (int index = start; index < end; index++)
         {
-            subArray[index - start] = data[index];
+            subArray[index - start] = new Vector3(data[index].x, data[index].y, data[index].z);
         }
 
         return subArray;
     }
 
+    private void drawCurve(Vector3[] controlPoints, Color color)
+    {
+        List<Vector3> samplePoints = new List<Vector3>();
+        for (int sampleIndex = 0; sampleIndex < numberOfSampePoints; sampleIndex++)
+        {
+            float t = (float)sampleIndex / (numberOfSampePoints - 1.0f);
+            Vector3 tangent;
+            samplePoints.Add(computePointOnBezierCurve(t, controlPoints, out tangent));
+        }
 
+        for (int sampleIndex = 0; sampleIndex < samplePoints.Count - 1; sampleIndex++)
+        {
+            Debug.Log($"Line {sampleIndex}, start point {samplePoints[sampleIndex]}, end point {samplePoints[sampleIndex + 1]}");
+            Debug.DrawLine(samplePoints[sampleIndex], samplePoints[sampleIndex + 1], color);
+        }
+    }
+
+    /*Function to compute the position and tangent on a Bezier surface
+    * 
+    * t - the parameter t of the Bezier curve
+    * controlPoints - list of control points to define the curve, row major order
+    * 
+    * return:
+    *  Value - the position of the point on the curve
+    *  tangent - the tangent vector of the Bezier curve at the point
+    */
+    // private Vector3 computePointOnBezierSurface(float u, float v, Vector3[] controlPoints, out Vector3 tangent)
+    // {
+    //     // Vector3 vControl
+    // }
 
     /*Function to compute the position and tangent on a Bezier curve
     * 
@@ -78,9 +108,13 @@ public class BezierSurface : MonoBehaviour
         {
             //iterate through control points
             for (int bezierIndex = 0; bezierIndex < bezierOrder; bezierIndex++)
+            {
+                //compute the control point one level down
+                Debug.Log($"Control Point {intermmediateControlPoints[bezierIndex]}, level {bezierOrder}, point {bezierIndex}, t {t}");
+                intermmediateControlPoints[bezierIndex] = ((1 - t)*intermmediateControlPoints[bezierIndex]) + (t*intermmediateControlPoints[bezierIndex + 1]);
+            }
 
-            //compute the control point one level down
-            intermmediateControlPoints[bezierIndex] = ((1 - t)*intermmediateControlPoints[bezierIndex]) + (t*intermmediateControlPoints[bezierIndex + 1]);
+            bezierOrder--;
         }
 
         //now the first two elements are of interest

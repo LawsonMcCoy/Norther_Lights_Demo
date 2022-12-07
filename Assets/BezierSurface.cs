@@ -12,7 +12,7 @@ public class BezierSurface : MonoBehaviour
     //mesh filter for grabbing the mesh
     [SerializeField] private MeshFilter meshFilter;
     private Mesh mesh;
-
+    private int nospsquared;
     //The control points
     const int NUMBER_OF_CONTROL_POINTS = 16;
     [Tooltip("4x4 matrix of control points in row major order")]
@@ -31,14 +31,35 @@ public class BezierSurface : MonoBehaviour
     {
         //get the mesh from the mesh filter
         mesh = meshFilter.mesh;
+        mesh.Clear();
+        Debug.Log(mesh);
+        //drawSurface(surfaceControlPoints, Color.yellow, Color.green, drawSurfaceNormals);
+        nospsquared = numberOfSampePoints* numberOfSampePoints;
+        
+        Vector3 [] vertexarray;
+        Vector3 [] normalarray;
+        int [] triangles = renderSurface(surfaceControlPoints,out normalarray, out vertexarray);
+        for(int i = 0; i < nospsquared ; i++){
+            Debug.Log(vertexarray[i]);
+        } 
+        int length = calcTrianglespoints();
+        for(int i = 0; i < length; i++){
+            Debug.Log($"triangles{triangles[i]}");
+        }
+        mesh.vertices = vertexarray;
+        mesh.normals = normalarray;
+        mesh.triangles = triangles;
+        meshFilter.mesh = mesh;
     }
+    
 
     private void Update()
     {
-        Awake();
+        //Awake();
+        
 
-        //draw the bezier surface
-        drawSurface(surfaceControlPoints, Color.yellow, Color.green, drawSurfaceNormals);
+        //draw the bezier surface 
+        //drawSurface(surfaceControlPoints, Color.yellow, Color.green, drawSurfaceNormals);
     }
 
     private Vector3[] Slice(Vector3[] data, int start, int end)
@@ -114,6 +135,61 @@ public class BezierSurface : MonoBehaviour
             }
         }
     }
+    //return a list of sample points and normals
+    private int[] renderSurface(Vector3[] controlPoints,out Vector3[] sampleNormals, out Vector3[] samplePoints)
+    {
+        //List<List<Vector3>> samplePoints = new List<List<Vector3>>();
+       // List<List<Vector3>> sampleNormals = new List<List<Vector3>>();
+        sampleNormals = new Vector3[nospsquared];
+        samplePoints = new Vector3[nospsquared];
+        int[] triangles = new int[calcTrianglespoints()];
+        Debug.Log($"nospsquared{nospsquared}");
+        int index = 0;
+        for (int vSampleIndex = 0; vSampleIndex < numberOfSampePoints; vSampleIndex++)
+        {
+            float v = (float)vSampleIndex / (numberOfSampePoints - 1.0f);
+            
+            //samplePoints.Add(new List<Vector3>());
+            //sampleNormals.Add(new List<Vector3>());
+
+            for (int uSampleIndex = 0; uSampleIndex < numberOfSampePoints; uSampleIndex++)
+            {
+                float u = (float)uSampleIndex / (numberOfSampePoints - 1.0f);
+                Vector3 normal;
+
+                samplePoints[(vSampleIndex*numberOfSampePoints) + uSampleIndex] = (computePointOnBezierSurface(u, v, controlPoints, out normal));
+                sampleNormals[(vSampleIndex* numberOfSampePoints) + uSampleIndex] = (normal);
+                if(vSampleIndex > 0){
+                    if(uSampleIndex < numberOfSampePoints-1){
+                    triangles[index] = (vSampleIndex*numberOfSampePoints) + uSampleIndex;
+                    index += 1;
+                   
+                    triangles[index] = ((vSampleIndex-1)*numberOfSampePoints) + uSampleIndex +1 ; 
+                    index += 1;
+                     triangles[index] = (vSampleIndex*numberOfSampePoints) + uSampleIndex +1 ; 
+                    index += 1;
+                    // upside down triangle
+                      triangles[index] = (vSampleIndex*numberOfSampePoints) + uSampleIndex;
+                    index += 1;
+                    triangles[index] = ((vSampleIndex-1)*numberOfSampePoints) + uSampleIndex ; 
+                    index += 1;
+                    triangles[index] = ((vSampleIndex-1)*numberOfSampePoints) + uSampleIndex +1 ; 
+                    index += 1;
+                    Debug.Log($"triindex{triangles[index-1]}");
+
+                    }
+                }
+            }
+        }
+        return triangles;
+
+      //return samplePoints;
+    }
+    int calcTrianglespoints(){
+       int sidecount = 1+2 + ((numberOfSampePoints-2)*3);
+       int middlecount = 2*3 + ((numberOfSampePoints-2)*6);
+       return (2*sidecount) + ((numberOfSampePoints-2)*middlecount);  
+    }
 
     /*Function to compute the position and tangent on a Bezier surface
     * 
@@ -174,7 +250,7 @@ public class BezierSurface : MonoBehaviour
         normal = Vector3.Cross(uTangent, vTangent);
 
         //return final point
-        // Debug.Log($"final point {finalPoint}, normal {normal}, v tangent {vTangent}, u tangent {uTangent}");
+        //Debug.Log($"final point {finalPoint}, normal {normal}, v tangent {vTangent}, u tangent {uTangent}");
         return finalPoint;
     }
 

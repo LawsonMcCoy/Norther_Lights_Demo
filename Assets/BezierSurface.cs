@@ -8,7 +8,8 @@ public class BezierSurface : MonoBehaviour
     [SerializeField] int numberOfSampePoints;
     [SerializeField] bool drawSurfaceNormals;
     [SerializeField] float normalDrawLength;
-
+    [SerializeField] Material newmat;
+    private Texture2D noiseTex;
     //mesh filter for grabbing the mesh
     [SerializeField] private MeshFilter meshFilter;
     private Mesh mesh;
@@ -50,12 +51,16 @@ public class BezierSurface : MonoBehaviour
         mesh.normals = normalarray;
         mesh.triangles = triangles;
         meshFilter.mesh = mesh;
+        //
+        noiseTex = new Texture2D(1,1)
+         newmat.mainTexture = noiseTex;
     }
     
 
     private void Update()
     {
-        //Awake();
+        
+    
         
 
         //draw the bezier surface 

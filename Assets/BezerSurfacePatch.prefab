@@ -357,7 +357,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 08c01e34f3cd520418c09b4e5fdcef46, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -394,7 +394,6 @@ MonoBehaviour:
   numberOfSampePoints: 20
   drawSurfaceNormals: 0
   normalDrawLength: 0.25
-  normalDrawColor: {r: 0, g: 0, b: 0, a: 0}
   meshFilter: {fileID: 4129338828523610115}
   surfaceControlTransforms:
   - {fileID: 4129338828323402202}

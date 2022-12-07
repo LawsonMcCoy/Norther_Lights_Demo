@@ -413,6 +413,10 @@ PrefabInstance:
       value: BezerSurfacePatch
       objectReference: {fileID: 0}
     - target: {fileID: 4129338828523610173, guid: fff9aa7625bbbae86a2bc39a81e2fb57, type: 3}
+      propertyPath: newmat
+      value: 
+      objectReference: {fileID: 2100000, guid: 08c01e34f3cd520418c09b4e5fdcef46, type: 2}
+    - target: {fileID: 4129338828523610173, guid: fff9aa7625bbbae86a2bc39a81e2fb57, type: 3}
       propertyPath: normalDrawLength
       value: 10
       objectReference: {fileID: 0}

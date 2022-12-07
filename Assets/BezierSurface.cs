@@ -174,7 +174,7 @@ public class BezierSurface : MonoBehaviour
         normal = Vector3.Cross(uTangent, vTangent);
 
         //return final point
-        Debug.Log($"final point {finalPoint}, normal {normal}, v tangent {vTangent}, u tangent {uTangent}");
+        // Debug.Log($"final point {finalPoint}, normal {normal}, v tangent {vTangent}, u tangent {uTangent}");
         return finalPoint;
     }
 

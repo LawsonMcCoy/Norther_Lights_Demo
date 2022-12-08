@@ -52,8 +52,8 @@ public class BezierSurface : MonoBehaviour
         mesh.triangles = triangles;
         meshFilter.mesh = mesh;
         //
-        // noiseTex = new Texture2D(1,1);
-        //  newmat.mainTexture = noiseTex;
+         //noiseTex = new Texture2D(1,1);
+          //newmat.mainTexture = noiseTex;
     }
     
 

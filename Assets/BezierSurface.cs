@@ -9,6 +9,7 @@ public class BezierSurface : MonoBehaviour
     [SerializeField] bool drawSurfaceNormals;
     [SerializeField] float normalDrawLength;
     [SerializeField] Material newmat;
+    [SerializeField] GameObject camera;
     private Texture2D noiseTex;
     //mesh filter for grabbing the mesh
     [SerializeField] private MeshFilter meshFilter;
@@ -39,7 +40,8 @@ public class BezierSurface : MonoBehaviour
         
         Vector3 [] vertexarray;
         Vector3 [] normalarray;
-        int [] triangles = renderSurface(surfaceControlPoints,out normalarray, out vertexarray);
+         Vector4 [] uvarray;
+        int [] triangles = renderSurface(surfaceControlPoints,out normalarray, out vertexarray,out uvarray);
         for(int i = 0; i < nospsquared ; i++){
             Debug.Log(vertexarray[i]);
         } 
@@ -51,6 +53,10 @@ public class BezierSurface : MonoBehaviour
         mesh.normals = normalarray;
         mesh.triangles = triangles;
         meshFilter.mesh = mesh;
+    
+        newmat.SetFloat("_exponent",9.0f);
+        newmat.SetVectorArray("array",uvarray);
+        //float a = newmat.shader.Find("GLSL basic111 shader").expo;
         //
          //noiseTex = new Texture2D(1,1);
           //newmat.mainTexture = noiseTex;
@@ -141,12 +147,13 @@ public class BezierSurface : MonoBehaviour
         }
     }
     //return a list of sample points and normals
-    private int[] renderSurface(Vector3[] controlPoints,out Vector3[] sampleNormals, out Vector3[] samplePoints)
+    private int[] renderSurface(Vector3[] controlPoints,out Vector3[] sampleNormals, out Vector3[] samplePoints,out Vector4[] uv)
     {
         //List<List<Vector3>> samplePoints = new List<List<Vector3>>();
        // List<List<Vector3>> sampleNormals = new List<List<Vector3>>();
         sampleNormals = new Vector3[nospsquared];
         samplePoints = new Vector3[nospsquared];
+        uv = new Vector4[nospsquared];
         int[] triangles = new int[calcTrianglespoints()];
         Debug.Log($"nospsquared{nospsquared}");
         int index = 0;
@@ -160,6 +167,7 @@ public class BezierSurface : MonoBehaviour
             for (int uSampleIndex = 0; uSampleIndex < numberOfSampePoints; uSampleIndex++)
             {
                 float u = (float)uSampleIndex / (numberOfSampePoints - 1.0f);
+                uv[vSampleIndex*numberOfSampePoints+uSampleIndex] =  new Vector4(u,v,0.0f,0.0f);
                 Vector3 normal;
 
                 samplePoints[(vSampleIndex*numberOfSampePoints) + uSampleIndex] = (computePointOnBezierSurface(u, v, controlPoints, out normal));

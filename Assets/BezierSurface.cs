@@ -167,7 +167,7 @@ public class BezierSurface : MonoBehaviour
             for (int uSampleIndex = 0; uSampleIndex < numberOfSampePoints; uSampleIndex++)
             {
                 float u = (float)uSampleIndex / (numberOfSampePoints - 1.0f);
-                uv[vSampleIndex*numberOfSampePoints+uSampleIndex] =  new Vector4(u,v,0.0f,0.0f);
+                uv[vSampleIndex*numberOfSampePoints+uSampleIndex] =  new Vector4(v,u,0.0f,0.0f);
                 Vector3 normal;
 
                 samplePoints[(vSampleIndex*numberOfSampePoints) + uSampleIndex] = (computePointOnBezierSurface(u, v, controlPoints, out normal));

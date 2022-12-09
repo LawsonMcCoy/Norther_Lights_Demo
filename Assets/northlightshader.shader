@@ -11,7 +11,7 @@ Shader "GLSL basic111 shader" { // defines the name of the shader
    SubShader { // Unity chooses the subshader that fits the GPU best
       Pass { // some shaders require multiple passes
          GLSLPROGRAM // here begins the part in Unity's GLSL
-         uniform vec4[] array;
+         uniform vec4[] uvCoordinates;
          uniform sampler2D _MainTex;
 
          // varying vec4 textureCoordinates; 
@@ -22,6 +22,7 @@ Shader "GLSL basic111 shader" { // defines the name of the shader
          uniform float ytilling = 7.0;
          uniform float xtilling = 0.11;
          varying vec4 pos; 
+         in int gl_VertexID;
          void main() // all vertex shaders define a main() function
          {
             //textureCoordinates = gl_MultiTexCoord0; 
@@ -30,7 +31,7 @@ Shader "GLSL basic111 shader" { // defines the name of the shader
             pos = gl_Position;
             float xwidth = 3.0*xtilling;
             float yheight = 3.0*ytilling;
-            textureCoordinates = vec2((gl_Position.x+1.5)/(20.0),(gl_Position.y+1.5)/(200.0));
+            textureCoordinates = vec2((uvCoordinates[gl_VertexID].x)/(20.0),(uvCoordinates[gl_VertexID].y)/(200.0));
 
             //textureCoordinates = vec2(0.5,0.5);
                // this line transforms the predefined attribute 

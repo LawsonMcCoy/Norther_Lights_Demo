@@ -32,45 +32,45 @@ public class BezierSurface : MonoBehaviour
     private void Start()
     {
         //get the mesh from the mesh filter
-        mesh = meshFilter.mesh;
-        mesh.Clear();
-        Debug.Log(mesh);
-        //drawSurface(surfaceControlPoints, Color.yellow, Color.green, drawSurfaceNormals);
-        nospsquared = numberOfSampePoints* numberOfSampePoints;
+        // mesh = meshFilter.mesh;
+        // mesh.Clear();
+        // Debug.Log(mesh);
+        // //drawSurface(surfaceControlPoints, Color.yellow, Color.green, drawSurfaceNormals);
+        // nospsquared = numberOfSampePoints* numberOfSampePoints;
         
-        Vector3 [] vertexarray;
-        Vector3 [] normalarray;
-         Vector4 [] uvarray;
-        int [] triangles = renderSurface(surfaceControlPoints,out normalarray, out vertexarray,out uvarray);
-        for(int i = 0; i < nospsquared ; i++){
-            Debug.Log(vertexarray[i]);
-        } 
-        int length = calcTrianglespoints();
-        for(int i = 0; i < length; i++){
-            Debug.Log($"triangles{triangles[i]}");
-        }
-        mesh.vertices = vertexarray;
-        mesh.normals = normalarray;
-        mesh.triangles = triangles;
-        meshFilter.mesh = mesh;
+        // Vector3 [] vertexarray;
+        // Vector3 [] normalarray;
+        //  Vector4 [] uvarray;
+        // int [] triangles = renderSurface(surfaceControlPoints,out normalarray, out vertexarray,out uvarray);
+        // for(int i = 0; i < nospsquared ; i++){
+        //     Debug.Log(vertexarray[i]);
+        // } 
+        // int length = calcTrianglespoints();
+        // for(int i = 0; i < length; i++){
+        //     Debug.Log($"triangles{triangles[i]}");
+        // }
+        // mesh.vertices = vertexarray;
+        // mesh.normals = normalarray;
+        // mesh.triangles = triangles;
+        // meshFilter.mesh = mesh;
     
-        newmat.SetFloat("_exponent",9.0f);
-        newmat.SetVectorArray("array",uvarray);
-        //float a = newmat.shader.Find("GLSL basic111 shader").expo;
-        //
-         //noiseTex = new Texture2D(1,1);
-          //newmat.mainTexture = noiseTex;
+        // newmat.SetFloat("_exponent",9.0f);
+        // newmat.SetVectorArray("uvCoordinates",uvarray);
+        // //float a = newmat.shader.Find("GLSL basic111 shader").expo;
+        // //
+        //  //noiseTex = new Texture2D(1,1);
+        //   //newmat.mainTexture = noiseTex;
     }
     
 
     private void Update()
     {
-        
+        Awake();
     
         
 
         //draw the bezier surface 
-        //drawSurface(surfaceControlPoints, Color.yellow, Color.green, drawSurfaceNormals);
+        drawSurface(surfaceControlPoints, Color.yellow, Color.green, drawSurfaceNormals);
     }
 
     private Vector3[] Slice(Vector3[] data, int start, int end)

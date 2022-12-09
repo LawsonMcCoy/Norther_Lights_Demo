@@ -1,4 +1,5 @@
 Shader "GLSL basic111 shader" { // defines the name of the shader 
+   
    Properties {//Define a list of values that can be passed into the shader
       _MainTex ("Texture Test", 2D) = "white" {}
       _exponent("expo", float) = 2.0
@@ -13,12 +14,13 @@ Shader "GLSL basic111 shader" { // defines the name of the shader
 
    SubShader { // Unity chooses the subshader that fits the GPU best
       Pass { // some shaders require multiple passes
+      Blend SrcAlpha OneMinusSrcAlpha
          GLSLPROGRAM // here begins the part in Unity's GLSL
              uniform vec4 array[1000];
           uniform sampler2D _MainTex;
 
          // varying vec4 textureCoordinates; 
-
+          // in vec4 pixel_color;
          #ifdef VERTEX // here begins the vertex shader
          //uniform float _speed;
          varying vec2 textureCoordinates; 
@@ -61,6 +63,7 @@ Shader "GLSL basic111 shader" { // defines the name of the shader
         uniform float _yexponent;
            varying vec2 uv;
          uniform vec4 _ColorFar;
+           //varying vec4 pixel_color;
          //uniform vec4 _Time;
          void main() // all fragment shaders define a main() function
          {
@@ -68,12 +71,19 @@ Shader "GLSL basic111 shader" { // defines the name of the shader
             //acolor = vec4(pow(sin((pos.x+1.5)*3.1415926/3),_exponent)*pow(sin((pos.y+1.5)*3.1415926/3),_exponent),pow(sin((pos.x+1.5)*3.1415926/3),_exponent)*pow(sin((pos.y+1.5)*3.1415926/3),_exponent),pow(sin((pos.x+1.5)*3.1415926/3),_exponent)*pow(sin((pos.y+1.5)*3.1415926/3),_exponent),0.0);                                  //* acolor.x;                                  ;//* acolor.x;
             //* acolor.y;
             //* acolor.z;
-            acolor = acolor*pow(sin((uv.x)*3.1415926),_exponent)*pow(sin((uv.y)*3.1415926),_yexponent);
+             acolor = acolor * pow(sin((uv.x)*3.1415926),_exponent)*pow(sin((uv.y)*3.1415926),_yexponent);
                vec4 _Colorfar = _ColorFar*acolor.x;
-
-
-             gl_FragColor = _Colorfar;
+               //_ColorFar.a = 0.6;
             
+            //if (acolor.x < 0.01){
+               //discard;
+           //}
+         
+              // vec4(gl_FragColor.a) * gl_FragColor + vec4(1.0 - gl_FragColor.a) * pixel_color
+             gl_FragColor = _Colorfar;
+             gl_FragColor.a =  pow(sin((uv.x)*3.1415926),_exponent)*pow(sin((uv.y)*3.1415926),_yexponent);
+
+            // gl_FragColor = vec4(0.6) * gl_FragColor + vec4(0.4) * pixel_color;
 
               //gl_FragColor =  vec4(fract(sin(pos.x*10) * 437588.5453123),fract(sin(pos.x*10) * 437588.5453123),fract(sin(pos.x*10) * 437588.5453123),1.0);
          }

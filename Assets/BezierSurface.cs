@@ -54,7 +54,7 @@ public class BezierSurface : MonoBehaviour
         mesh.triangles = triangles;
         meshFilter.mesh = mesh;
     
-        newmat.SetFloat("_exponent",9.0f);
+        //newmat.SetFloat("_exponent",9.0f);
         newmat.SetVectorArray("array",uvarray);
         //float a = newmat.shader.Find("GLSL basic111 shader").expo;
         //

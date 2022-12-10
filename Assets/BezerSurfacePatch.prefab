@@ -394,6 +394,8 @@ MonoBehaviour:
   numberOfSampePoints: 20
   drawSurfaceNormals: 0
   normalDrawLength: 0.25
+  newmat: {fileID: 2100000, guid: 08c01e34f3cd520418c09b4e5fdcef46, type: 2}
+  camera: {fileID: 0}
   meshFilter: {fileID: 4129338828523610115}
   surfaceControlTransforms:
   - {fileID: 4129338828323402202}

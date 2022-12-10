@@ -13,7 +13,7 @@ public class cameramovement : MonoBehaviour
     }
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.D)){
+        if (Input.GetKeyDown("w")){
 
             trans.Translate(Vector3.forward);
         }

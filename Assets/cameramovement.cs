@@ -15,31 +15,35 @@ public class cameramovement : MonoBehaviour
     {
         if (Input.GetKeyDown("w")){
 
-            trans.Translate(Vector3.forward);
+            trans.Translate(Vector3.forward*50);
         }
         if (Input.GetKeyDown("s")){
 
-            trans.Translate(Vector3.back);
+            trans.Translate(Vector3.back*1);
             }        
         if (Input.GetKeyDown("d")){
 
-            trans.Translate(Vector3.right);
+            trans.Translate(Vector3.right*30);
         }
         if (Input.GetKeyDown("a")){
 
-           trans.Translate(Vector3.left);
+           trans.Translate(Vector3.left*5);
         }
         if (Input.GetKeyDown("space")){
 
-            trans.Translate(Vector3.up);
+            trans.Translate(Vector3.up*150);
         }
         
         if (Input.GetKeyDown("x")){
 
             trans.Translate(Vector3.down);
         }
-    
-        
+
+         float h = 2.0f * Input.GetAxis("Mouse X");
+        float v = 2.0f * Input.GetAxis("Mouse Y");
+
+        trans.Rotate(v, h, 0);
+
     }
     void OnCollisionEnter(Collision collision){
         

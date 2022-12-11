@@ -19,7 +19,7 @@ Shader "GLSL basic111 shader" { // defines the name of the shader
 
    SubShader { // Unity chooses the subshader that fits the GPU best
 
-   Tags { "Queue"="Transparent" "RenderType"="Transparent" "IgnoreProjector"="False"}  //"Queue"="Background+1501"}
+   Tags { "Queue"="Transparent" "RenderType"="Transparent" "IgnoreProjector"="True"}  //"Queue"="Background+1501"}
       Pass { // some shaders require multiple passes
       ZWrite Off
      Blend SrcAlpha OneMinusSrcAlpha
@@ -104,6 +104,9 @@ Shader "GLSL basic111 shader" { // defines the name of the shader
            if (uv.x < 0.001 || uv.y < 0.001 || uv.x > 0.999 || uv.y >0.999){
               discard;
            }
+      //if(pow(sin((uv.x)*PI),_exponent)*acolor.x*(1-pow(uv.y,0.4))<0.01){
+             // discard;
+           //}
          
               // vec4(gl_FragColor.a) * gl_FragColor + vec4(1.0 - gl_FragColor.a) * pixel_color
                gl_FragColor = _Color*(8.0 + 250.0*pow(cos(uv.y*PI/2.0),25.0));//*pow(cos(uv.y*3.1415926/2.0),10.0) + 0.1);

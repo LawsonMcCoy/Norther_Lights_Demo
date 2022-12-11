@@ -38,7 +38,13 @@ public class cameramovement : MonoBehaviour
 
             trans.Translate(Vector3.down);
         }
+    
         
+    }
+    void OnCollisionEnter(Collision collision){
         
+        ContactPoint contact = collision.contacts[0];
+        //Quaternion rotation = Quaternion.FromToRotation(Vector3.up, contact.normal);
+        Vector3 position = contact.point;
     }
 }

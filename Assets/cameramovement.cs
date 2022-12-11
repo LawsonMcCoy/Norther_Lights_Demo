@@ -5,44 +5,49 @@ using UnityEngine;
 public class cameramovement : MonoBehaviour
 {
     // Start is called before the first frame update
-  
+    
+
+  private const int MoveAmount = 20;
     private Transform trans;
-    // Update is called once per frame
     void Start(){
         trans = gameObject.GetComponent<Transform>();
+
+        //lock the curser when controlling the player
+        Cursor.lockState = CursorLockMode.Locked;
     }
     void Update()
     {
         if (Input.GetKeyDown("w")){
 
-            trans.Translate(Vector3.forward*50);
+            trans.Translate(Vector3.forward*MoveAmount);
         }
         if (Input.GetKeyDown("s")){
 
-            trans.Translate(Vector3.back*1);
+            trans.Translate(Vector3.back*MoveAmount);
             }        
         if (Input.GetKeyDown("d")){
 
-            trans.Translate(Vector3.right*30);
+            trans.Translate(Vector3.right*MoveAmount);
         }
         if (Input.GetKeyDown("a")){
 
-           trans.Translate(Vector3.left*5);
+           trans.Translate(Vector3.left*MoveAmount);
         }
         if (Input.GetKeyDown("space")){
 
-            trans.Translate(Vector3.up*150);
+            trans.Translate(Vector3.up*MoveAmount);
         }
         
         if (Input.GetKeyDown("x")){
 
-            trans.Translate(Vector3.down);
+            trans.Translate(Vector3.down*MoveAmount);
         }
 
          float h = 2.0f * Input.GetAxis("Mouse X");
         float v = 2.0f * Input.GetAxis("Mouse Y");
 
-        trans.Rotate(v, h, 0);
+        trans.Rotate(trans.right, -v);
+        trans.Rotate(Vector3.up, h);
 
     }
     void OnCollisionEnter(Collision collision){

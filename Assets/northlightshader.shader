@@ -40,7 +40,7 @@ Shader "GLSL basic111 shader" { // defines the name of the shader
          varying vec2 textureCoordinates; 
         // uniform float ytilling = 7.0;
          //uniform float xtilling = 0.11;
-         in int gl_VertexID;
+         //in int gl_VertexID;
          varying vec4 pos; 
          varying vec2 uv;
           uniform vec4 _Time;

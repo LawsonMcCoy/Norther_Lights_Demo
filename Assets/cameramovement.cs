@@ -42,6 +42,9 @@ public class cameramovement : MonoBehaviour
 
             trans.Translate(Vector3.down*MoveAmount);
         }
+        if(Input.GetKeyDown(KeyCode.Escape)){
+            Application.Quit();
+        }
 
          float h = 2.0f * Input.GetAxis("Mouse X");
         float v = 2.0f * Input.GetAxis("Mouse Y");
